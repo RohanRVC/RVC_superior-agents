@@ -102,6 +102,8 @@ superior-agent/
 
 ## Project structure created by Agent
 
+superior-agent/
+|
 ├── logger/
 │   └── <project-slug>/
 │       ├── code/
