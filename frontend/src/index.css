@@ -4,7 +4,7 @@
 
 @layer base {
   html {
-    scroll-behavior: smooth;
+    @apply scroll-smooth;
   }
   
   body {
@@ -12,7 +12,8 @@
   }
   
   * {
-    /* Remove border-border utility that doesn't exist */
+    /* Apply border color from theme */
+    @apply border-gray-200 dark:border-gray-700;
   }
 }
 
