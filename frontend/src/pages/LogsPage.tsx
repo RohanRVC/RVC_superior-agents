@@ -1,120 +1,150 @@
-import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import Terminal from '../components/Terminal';
-import { FiDownload, FiRefreshCw } from 'react-icons/fi';
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, Download, Copy, Terminal } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
-const LogsPage = () => {
-  const { projectId } = useParams<{ projectId: string }>();
-  const [logs, setLogs] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [projectName, setProjectName] = useState('');
+const mockLogs = [
+  { timestamp: '19:12:45', level: 'INFO', message: '🧠 Starting Step 0 at 2025-07-07 19:12:45' },
+  { timestamp: '19:12:46', level: 'INFO', message: '📨 Prompt generated: You are a CTO building the following...' },
+  { timestamp: '19:12:48', level: 'INFO', message: '✅ LLM response received, 586 tokens' },
+  { timestamp: '19:12:48', level: 'INFO', message: '📄 Generated roadmap: main.py, routes.py, templates/index.html, static/css/styles.css' },
+  { timestamp: '19:12:49', level: 'INFO', message: '🔁 Running step 1...' },
+  { timestamp: '19:12:50', level: 'INFO', message: '🔍 Generated: main.py (Flask entry point)' },
+  { timestamp: '19:12:50', level: 'INFO', message: '📄 Saved: logger/portfolio/code/main.py' },
+  { timestamp: '19:12:51', level: 'INFO', message: '🔁 Running step 2...' },
+  { timestamp: '19:12:52', level: 'INFO', message: '🔍 Generated: templates/index.html (HTML page)' },
+  { timestamp: '19:12:52', level: 'INFO', message: '📄 Saved: logger/portfolio/code/templates/index.html' },
+  { timestamp: '19:12:53', level: 'INFO', message: '🔁 Running step 3...' },
+  { timestamp: '19:12:54', level: 'INFO', message: '🔍 Generated: static/css/styles.css (Styling)' },
+  { timestamp: '19:12:54', level: 'INFO', message: '📄 Saved: logger/portfolio/code/static/css/styles.css' },
+  { timestamp: '19:12:55', level: 'SUCCESS', message: '🎉 Build complete. README.md created. Code available at /logger/portfolio' },
+];
+
+const LogsPage: React.FC = () => {
+  const [logs, setLogs] = useState<typeof mockLogs>([]);
+  const [isLive, setIsLive] = useState(true);
 
   useEffect(() => {
-    // In a real implementation, fetch logs from backend
-    // For now, we'll simulate logs
-    const fetchLogs = () => {
-      setIsLoading(true);
-      
-      // Simulate API call delay
-      setTimeout(() => {
-        // Generate sample logs based on projectId
-        const sampleLogs = [
-          '🚀 Welcome to AutoFounder OS 💪🏻🤖💖',
-          '💡 Processing idea: "Build a personal portfolio website with Flask backend"',
-          '🤖 Model selected: OpenRouter (GPT-4)',
-          '🧠 Starting AutoBuilder Agent...',
-          '[INFO 19:12:45] 🧠 Starting Step 0 at 2025-07-07 19:12:45',
-          '[INFO] 📨 Prompt generated: You are a CTO building the following...',
-          '[INFO] ✅ LLM response received, 586 tokens',
-          '[INFO] 📄 Generated roadmap: main.py, routes.py, templates/index.html, static/css/styles.css',
-          '🔁 Running step 1...',
-          '[INFO] 🔍 Generated: main.py (Flask entry point)',
-          '[INFO] 📄 Saved: logger/portfolio/code/main.py',
-          '🔁 Running step 2...',
-          '[INFO] 🔍 Generated: templates/index.html (HTML page)',
-          '[INFO] 📄 Saved: logger/portfolio/code/templates/index.html',
-          '🎉 Build complete. README.md created. Code available at /logger/portfolio'
-        ];
-        
-        setLogs(sampleLogs);
-        setProjectName(projectId || 'Unknown Project');
-        setIsLoading(false);
-      }, 1000);
-    };
+    // Simulate real-time logs
+    let index = 0;
+    const interval = setInterval(() => {
+      if (index < mockLogs.length) {
+        setLogs(prev => [...prev, mockLogs[index]]);
+        index++;
+      } else {
+        setIsLive(false);
+        clearInterval(interval);
+      }
+    }, 1000);
 
-    fetchLogs();
-    
-    // Set up polling for log updates (every 5 seconds)
-    const intervalId = setInterval(fetchLogs, 5000);
-    
-    // Clean up interval on component unmount
-    return () => clearInterval(intervalId);
-  }, [projectId]);
+    return () => clearInterval(interval);
+  }, []);
 
-  const handleRefresh = () => {
-    setIsLoading(true);
-    // In a real implementation, this would fetch fresh logs
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
+  const copyLogs = () => {
+    const logText = logs.map(log => `[${log.timestamp}] ${log.level}: ${log.message}`).join('\n');
+    navigator.clipboard.writeText(logText);
   };
 
-  const handleDownload = () => {
-    // Create a blob with the logs content
-    const blob = new Blob([logs.join('\n')], { type: 'text/plain' });
+  const downloadLogs = () => {
+    const logText = logs.map(log => `[${log.timestamp}] ${log.level}: ${log.message}`).join('\n');
+    const blob = new Blob([logText], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
-    
-    // Create a temporary link and trigger download
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${projectName}-logs.txt`;
-    document.body.appendChild(a);
+    a.download = 'autofounder-logs.txt';
     a.click();
-    
-    // Clean up
-    document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
 
   return (
-    <div className="py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold">Build Logs: {projectName}</h1>
-            <div className="flex space-x-4">
-              <button
-                onClick={handleRefresh}
-                className="flex items-center px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-dark-100 transition-colors duration-200"
-              >
-                <FiRefreshCw className="mr-2" />
-                Refresh
-              </button>
-              <button
-                onClick={handleDownload}
-                className="flex items-center px-4 py-2 rounded-lg bg-primary-600 hover:bg-primary-700 text-white transition-colors duration-200"
-              >
-                <FiDownload className="mr-2" />
-                Download Logs
-              </button>
+    <div className="min-h-screen bg-gray-900 text-white">
+      {/* Header */}
+      <div className="bg-gray-800 border-b border-gray-700 px-6 py-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <Link
+              to="/"
+              className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors"
+            >
+              <ArrowLeft className="h-5 w-5" />
+              <span>Back to Home</span>
+            </Link>
+            <div className="flex items-center space-x-2">
+              <Terminal className="h-5 w-5 text-blue-400" />
+              <h1 className="text-xl font-semibold">Agent Logs</h1>
+              {isLive && (
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <span className="text-sm text-green-400">Live</span>
+                </div>
+              )}
             </div>
           </div>
 
-          <div className="glass-card p-6">
-            <Terminal logs={logs} isLoading={isLoading} />
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={copyLogs}
+              className="flex items-center space-x-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
+            >
+              <Copy className="h-4 w-4" />
+              <span>Copy</span>
+            </button>
+            <button
+              onClick={downloadLogs}
+              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+            >
+              <Download className="h-4 w-4" />
+              <span>Download Logs</span>
+            </button>
           </div>
-          
-          <div className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
-            <p>
-              Logs are updated automatically every 5 seconds. You can also manually refresh.
-            </p>
+        </div>
+      </div>
+
+      {/* Terminal */}
+      <div className="max-w-7xl mx-auto p-6">
+        <div className="bg-black rounded-lg border border-gray-700 overflow-hidden">
+          <div className="p-6 font-mono text-sm space-y-1 h-96 overflow-y-auto">
+            {logs.map((log, index) => (
+              <div
+                key={index}
+                className={`flex items-start space-x-3 animate-fade-in ${
+                  log.level === 'SUCCESS' ? 'text-green-400' :
+                  log.level === 'ERROR' ? 'text-red-400' :
+                  log.level === 'WARN' ? 'text-yellow-400' :
+                  'text-gray-300'
+                }`}
+              >
+                <span className="text-gray-500 text-xs mt-0.5 w-20 flex-shrink-0">
+                  [{log.timestamp}]
+                </span>
+                <span className={`text-xs mt-0.5 w-16 flex-shrink-0 ${
+                  log.level === 'SUCCESS' ? 'text-green-400' :
+                  log.level === 'ERROR' ? 'text-red-400' :
+                  log.level === 'WARN' ? 'text-yellow-400' :
+                  'text-blue-400'
+                }`}>
+                  {log.level}:
+                </span>
+                <span className="flex-1">{log.message}</span>
+              </div>
+            ))}
+            {isLive && (
+              <div className="flex items-center space-x-3">
+                <span className="text-gray-500 text-xs w-20 flex-shrink-0">[{new Date().toLocaleTimeString()}]</span>
+                <div className="w-2 h-4 bg-green-400 animate-pulse"></div>
+              </div>
+            )}
           </div>
-        </motion.div>
+        </div>
+
+        {/* Bottom Actions */}
+        <div className="mt-6 flex justify-center space-x-4">
+          <button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300">
+            Download Code
+          </button>
+          <button className="bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-xl font-semibold transition-colors border border-gray-600">
+            Export Logs
+          </button>
+        </div>
       </div>
     </div>
   );
