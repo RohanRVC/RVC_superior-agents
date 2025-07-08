@@ -7,6 +7,9 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
+      borderColor: {
+        DEFAULT: 'currentColor',
+      },
       fontFamily: {
         'mono': ['Fira Code', 'Monaco', 'Cascadia Code', 'Ubuntu Mono', 'monospace'],
       },
