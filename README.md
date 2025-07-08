@@ -1,272 +1,162 @@
-# Superior Agents
+# 🚀 AutoFounder: Prompt-to-Product AI Agent
 
-## Live link-:https://stately-parfait-d84cc7.netlify.app/
+AutoFounder is a fully autonomous Python agent that takes a single-line idea prompt and generates a full working codebase — complete with files, folders, logic, and README.
 
-## Table of Contents
 
-* [Superior Agent](#superior-agent)
-* [Features](#features)
-* [Documentation Site](#documentation-site)
-* [Installation](#installation)
 
-  * [Requirements for Windows Platform](#requirements-for-windows-platform)
-  * [Requirements](#requirements)
-  * [Bootstrapper](#bootstrapper)
-  * [Agent-side](#agent-side)
-
-    * [Agent Configuration JSON Files](#agent-configuration-json-files)
-    * [Environment Variable](#environment-variable)
-* [Quick Start](#quick-start)
-
-  * [Run Agent Docker Container](#run-agent-docker-container)
-  * [Run the Agent (in a separate tab)](#run-the-agent-in-a-separate-tab)
-* [Meta Swap API](#meta-swap-api)
-
-  * [Meta Swap API Quickstart](#meta-swap-api-quickstart)
-* [Notification Scraper (optional)](#notification-scraper-optional)
-
-  * [Notification Quickstart](#notification-quickstart)
-* [Contributing](#contributing)
-* [License](#license)
-
-## Superior Agent
-
-This project is a trading and marketing agent that interacts with various APIs to perform trading operations and manage marketing strategies. It utilizes FastAPI for the web server, Docker for container management, and various libraries for interacting with blockchain networks and social media platforms.
-
-## Features
-
-- Research – Analyze market trends, tokenomics, and narratives.
-- Formulate strategies – Make intelligent, data-backed investment decisions.
-- Execute trades – Buy and sell crypto assets autonomously.
-- Market themselves – Promote their holdings and increase their AUM.
-- Promote (or FUD) – Influence market sentiment to their advantage.
-- Assess their own performance – Measure profitability and adapt.
-- Self-improve daily – Learn from successes and failures, refining strategies over time.
-
-## Documentation Site
-
-For a comprehensive guide to the Superior Agent Framework, please visit our [Documentation Site](https://superioragents.github.io/superioragents-docs/).
-
-## Folder Structure
-
-Each folder in the repository represents a self-contained component of the system:
-
-* [`agent`](./agent) — Contains the core trading and marketing agent logic.
-* `db` — Serves as the storage directory for databases and RAG (Retrieval-Augmented Generation) files.
-* [`meta-swap-api`](./meta-swap-api) — A NestJS-based API that facilitates token swaps using multiple aggregators.
-* [`notification`](./notification) — Handles data collection from various sources to feed into the agent.
-* [`rag`](./rag-api) — Hosts the RAG API for enhanced research and data retrieval capabilities.
-
-# Installation
-
-🎥 [Quickstart for Setting Up a Trading Agent](https://youtu.be/q6kTvTWc4p4) 
-
-Here’s a revised version of that section with improved grammar and a more formal tone:
+Think of it like a **CTO-in-a-box** that turns ideas into software step by step.
 
 ---
 
-## Requirements for Windows Platform
+## 🌟 Features
 
-Before proceeding, you must have **WSL (Windows Subsystem for Linux)** installed on your system.
-Please follow the instructions in [WINDOWS\_WSL.md](WINDOWS_WSL.md) to set up WSL properly.
+- 🧠 **Autonomous Agent**: Uses LLMs to reason, plan, and build files one by one.
+- 📁 **Multi-file Support**: Supports any file type — `.py`, `.html`, `.css`, `.js`, etc.
+- 📦 **Code Folder Structure**: Saves outputs with real folder nesting (e.g., `templates/`, `static/css/`).
+- 📝 **Copilot Tracking**: Logs every build step and conversation in `.json`.
+- 🔁 **Session Resume**: Continues from the last build step using SQLite DB.
+- 🧾 **Auto README.md**: Writes a project README at the end automatically.
+- 🗂️ **File Map Log**: Saves `.filemap.json` to track what files were created.
+- 🤖 **RAG Build**: RAG integration (planned) to let the agent learn from custom datasets and documentation.
+- 🫙 **Containerization**: Built with containerization in mind — easily deployable using Docker for consistent local or cloud runs.
 
+---
 
-## Requirements
+## 🧰 How It Works
 
-- Python 3.12 or higher.
-- [Docker](https://docs.docker.com/engine/install/ubuntu/)
-- Install pyenv requirements
+1. You give a startup/product idea as input
+2. AutoFounder runs `Step 0` to create a roadmap of files to build
+3. It then builds each file in a separate step
+4. Once done, it generates a `README.md` file
+5. Code is saved inside `logger/<your_project>/code/`
 
-```
-sudo apt install -y build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev curl libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
-```
+---
 
-- Install pyenv
-
-```
-curl https://pyenv.run | bash
-```
-
-- Add pyenv to bashrc
-
-```
-echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
-echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
-echo 'eval "$(pyenv init --path)"' >> ~/.bashrc
-echo 'eval "$(pyenv init -)"' >> ~/.bashrc
-source ~/.bashrc
-```
-
-- Install docker
-
-```
-sudo apt-get update
-sudo apt-get install -y ca-certificates curl gnupg lsb-release
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update
-sudo apt-get install -y docker-ce docker-ce-cli containerd.io
-```
-
-- Add user to docker
-
-```
-sudo groupadd docker
-sudo usermod -aG docker $USER
-newgrp docker
-```
-
-- Test your configuration
-
-```
-pyenv --version
-python --version
-docker --version
-docker-compose --version
-```
-
-## Bootstrapper
-
-On Windows (under WSL) or on Mac/Linux, the fastest way to get started is to use the `bootstrap.sh` script
-
-```
-chmod +x bootstrap.sh
-./bootstrap.sh
-```
-
-## Agent-side
+## 🧪 Example Prompt
 
 ```bash
-# Create python virtual environment (recommended)
-python -m venv agent-venv
+"Build a job board web app with Flask backend and responsive HTML/CSS frontend"
+🎯 Output:
 
-# Activate virtual environment
-source agent-venv/bin/activate
+main.py, routes.py, models.py, config.py
 
-# Navigate to agent's directory
-cd agent
+templates/index.html, about.html
 
-# Install all required dependencies
-pip install -e .
+static/css/styles.css, static/js/app.js
 
-# Copy the example environment file and configure your settings:
-cp .env.example .env
-```
+README.md, .filemap.json
 
-### Agent Configuration JSON Files
+🧑‍💻 Run Locally
+bash
+Copy
+Edit
+git clone https://github.com/yourusername/autofounder.git
+cd autofounder
+pip install -r requirements.txt
+Create a .env file:
 
-The `marketing.json` and `trading.json` files in the `agent/starter/` directory are crucial configuration files that define the default prompts and behavior for marketing and trading agents. These files allow you to customize:
+env
 
-- **Agent Identification**: Set a unique `agent_id` for tracking and management
-- **Model Selection**: Choose the AI model (e.g., "claude") for generating strategies
-- **Role Definition**: Define the agent's role and persona
-- **Time Horizon**: Set the duration for strategy execution
-- **Metric Goals**: Specify the key performance metric (e.g., "followers" or "wallet")
-- **Research Tools**: List available APIs and research resources
-- **Prompts**: Detailed, customizable prompt templates for:
-  - System initialization
-  - Strategy generation
-  - Code implementation
-  - Error handling and code regeneration
+OPENROUTER_API_KEY=your_key
+Then run the agent:
 
-These JSON files provide a flexible configuration mechanism to control agent behavior without changing the core code.
+##AutoFounder project structure
 
-## Environment Variable
+AutoFounder/
+├── agent/
+│   ├── scripts/
+│   │   └── autofounder.py
+│   ├── flows/
+│   │   └── autofounder.py
+│   ├── agent/
+│   │   ├── builder.py
+│   │   └── prompt_generator.py
+│   ├── db/
+│   │   ├── __init__.py
+│   │   ├── chat.py
+│   │   ├── steps.py
+│   │   └── export.py
+│   ├── genner/
+│   │   ├── __init__.py
+│   │   └── OpenRouterGenner.py
+│   ├── helper/
+│   │   └── helper.py
+│   ├── logger/
+│   │   ├── copilot_tracker.py
+│   │   ├── project_writer.py
+│   │   └── project_logger.py
+│   ├── sensor/
+│   │   └── idea.py
+│   └── types/
+│       └── __init__.py
 
-Make sure to include these variables to .env file in agent's directory
+## Project structure created by Agent
 
-```env
-# Research tools
-TWITTER_API_KEY=
-TWITTER_API_KEY_SECRET=
-TWITTER_BEARER_TOKEN=
-TWITTER_ACCESS_TOKEN=
-TWITTER_ACCESS_TOKEN_SECRET=
+├── logger/
+│   └── <project-slug>/
+│       ├── code/
+│       │   └── ...                     # Generated files (main.py, templates/, etc.)
+│       ├── README.md
+│       ├── .filemap.json
+│       ├── system.log
+│       └── steps/
+│           ├── step_0.json
+│           ├── step_1.json
+│           └── ...
 
-COINGECKO_API_KEY=
-INFURA_PROJECT_ID=
-ETHERSCAN_API_KEY=
-ONEINCH_API_KEY=
-
-# Ether address for testing
-ETHER_ADDRESS=
-
-# LLM Keys
-OPENROUTER_API_KEY=
-DEEPSEEK_DEEPSEEK_API_KEY=
-ANTHROPIC_API_KEY=
-
-# Our services
-TXN_SERVICE_URL="http://localhost:9009"
-RAG_SERVICE_URL="http://localhost:8080"
-```
-
-# Quick Start
-
-## Run Agent Docker Container
-
-```bash
-# Navigate to docker configuration
-cd agent/docker
-
-# Create and start the container locally
-docker compose up -d
-```
+├── .env
+├── autofounder.db
+├── main.py
+└── requirements.txt
 
 
-## Run the agent (in a seperate tab)
+python main.py
+📂 Output Structure
+bash
+Copy
+Edit
+logger/
+└── your_project/
+    ├── code/
+    │   ├── main.py
+    │   ├── static/js/app.js
+    │   └── templates/index.html
+    ├── README.md
+    ├── .filemap.json
+    ├── system.log
+    └── steps/
+        ├── step_0.json
+        ├── step_1.json
+        └── ...
+🧠 Architecture
+BuilderAgent – core agent logic
 
-To run the trading/marketing bot
+PromptGenerator – decides what to ask the LLM each step
 
-```bash
-# Navigate into root folder
-cd ../..
+Genner – LLM wrapper (supports OpenRouter, OpenAI, Claude)
 
-# Activate virtual environment
-source agent-venv/bin/activate
+SQLiteDB – stores chat history + last build step
 
-# Example running command
-python -m scripts.starter
-```
+Logger – writes code files, summaries, .filemap.json
 
-# Meta Swap API
+🛠️ Tech Stack
+Python 3.10+
 
-NestJS-based API service supporting multiple aggregators for optimal swap execution. The documentation can be found in the [/meta-swap-api](/meta-swap-api)
+SQLite (for step tracking)
 
-## Meta Swap API Quickstart 
-1. Navigate to the `meta-swap-api` directory:
+Any LLM via OpenRouter (or plug your own)
 
-```bash
-cd meta-swap-api
-```
+Markdown / JSON / File I/O
 
-2. Start the `meta-swap-api`:
+📄 License
+RIVAC – do whatever you want 🚀
 
-```bash
-docker compose up --build
-```
+🤝 Contribute
+Have feedback, features or bugs? Raise an issue or drop a PR!
 
-# Notification Scraper (optional)
+Built with ❤️ by Rohan Vinay Chaudhary
 
-Notification service that aggregates data from multiple sources to be saved on the database. It will be used to feed the data to agents. The documentation can be found in the [/notification](/notification)
 
-## Notification Quickstart 
-1. Navigate to the notification directory:
 
-```bash
-cd notification
-```
+---
 
-2. Start the notification worker:
-
-```bash
-docker compose up --build
-```
-
-# Contributing
-
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
-
-# License
-
-This project is licensed under the [Apache License 2.0](LICENSE).
