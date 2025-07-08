@@ -1,6 +1,6 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @layer base {
   html {
@@ -17,40 +17,72 @@
 }
 
 @layer components {
-  .prose {
-    @apply max-w-none;
+  .glass-morphism {
+    @apply bg-white/30 dark:bg-gray-900/30 backdrop-blur-md border border-white/20 dark:border-gray-800/50;
   }
   
-  .prose h1 {
-    @apply text-2xl font-bold text-gray-900 dark:text-white mb-4;
+  .terminal-line {
+    @apply font-mono text-sm leading-relaxed;
   }
   
-  .prose h2 {
-    @apply text-xl font-semibold text-gray-900 dark:text-white mb-3 mt-6;
+  .gradient-text {
+    @apply bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent;
   }
   
-  .prose p {
-    @apply text-gray-600 dark:text-gray-300 mb-4;
+  .dark .gradient-text {
+    @apply bg-gradient-to-r from-blue-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent;
   }
   
-  .prose ul {
-    @apply list-disc list-inside text-gray-600 dark:text-gray-300 mb-4;
+  .code-window {
+    @apply bg-gray-900 rounded-lg overflow-hidden border border-gray-700;
   }
   
-  .prose li {
-    @apply mb-1;
+  .code-header {
+    @apply flex items-center justify-between px-4 py-2 bg-gray-800 border-b border-gray-700;
   }
   
-  .prose pre {
-    @apply bg-gray-100 dark:bg-gray-800 rounded-lg p-4 overflow-x-auto mb-4;
+  .code-dots {
+    @apply flex space-x-2;
   }
   
-  .prose code {
-    @apply font-mono text-sm bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded;
+  .code-dot {
+    @apply w-3 h-3 rounded-full;
   }
   
-  .prose pre code {
-    @apply bg-transparent p-0;
+  .code-dot-red {
+    @apply bg-red-500;
+  }
+  
+  .code-dot-yellow {
+    @apply bg-yellow-500;
+  }
+  
+  .code-dot-green {
+    @apply bg-green-500;
+  }
+  
+  .code-content {
+    @apply p-4 text-green-400;
+  }
+  
+  .terminal-info {
+    @apply text-blue-400;
+  }
+  
+  .terminal-error {
+    @apply text-red-400;
+  }
+  
+  .terminal-warning {
+    @apply text-yellow-400;
+  }
+  
+  .terminal-success {
+    @apply text-green-400;
+  }
+  
+  .glass-card {
+    @apply bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl border border-gray-200 dark:border-gray-700 shadow-lg;
   }
 }
 
