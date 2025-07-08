@@ -1,7 +1,11 @@
-@@ .. @@
-   "scripts": {
-     "dev": "vite",
-     "build": "tsc && vite build",
-     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-     "preview": "vite preview"
-   },
+{
+  "name": "superior-agent",
+  "version": "0.1.0",
+  "description": "Superior Agent - Autonomous AI Agent System",
+  "scripts": {
+    "dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "lint": "cd frontend && npm run lint",
+    "preview": "cd frontend && npm run preview"
+  }
+}
