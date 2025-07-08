@@ -159,17 +159,154 @@ Called inside autofounder.py using:
 #             except Exception as e:
 #                 log_error(self.project_name, f"❌ Failed to generate README.md: {e}")
 
+# Working perfect 1------------------------------------------------------------------------------------------------------------------
+
 # builder.py – Main AutoFounder Agent Logic
 
+# import os
+# import json,re
+# from datetime import datetime
+
+# from agent.src.logger.project_logger import log_info, log_warn, log_error
+# from agent.src.logger.project_writer import save_generated_files
+# from agent.src.logger.copilot_tracker import track_step
+# from agent.src.types import ChatHistory
+# from agent.src.helper import timestamp_now, nanoid, extract_content, extract_json_block , clean_llm_code_blob
+
+
+# class BuilderAgent:
+#     def __init__(self, idea, sensor, prompt_generator, genner, db):
+#         self.sensor = sensor
+#         self.sensor.set(idea)
+#         self.prompt_generator = prompt_generator
+#         self.genner = genner
+#         self.db = db
+
+#         self.chat_history = ChatHistory()
+#         self.project_name = self.slugify(self.sensor.get())
+#         self.progress = {"status": "active", "step": 0}
+#         self.file_list = []
+#         self.max_steps = 50
+#         self.step_count = 0
+
+#         os.makedirs(f"logger/{self.project_name}", exist_ok=True)
+
+#     def slugify(self, text):
+#         return text.lower().replace(" ", "_").replace("-", "_")[:40]
+
+#     def next_prompt(self):
+#         if self.step_count == 0:
+#             return self.prompt_generator.generate_prompt(self.sensor.get(), 0)
+
+#         if hasattr(self, "file_list") and self.step_count <= len(self.file_list):
+#             filename = self.file_list[self.step_count - 1]
+#             return self.prompt_generator.generate_file_prompt(self.sensor.get(), self.step_count, filename)
+
+#         return self.prompt_generator.generate_prompt(self.sensor.get(), self.step_count)
+
+#     def process_step(self, step_result):
+#         if "files" in step_result:
+#             save_generated_files(self.project_name, step_result["files"])
+#         track_step(self.project_name, self.step_count, step_result)
+
+#         if "summary" in step_result:
+#             self.chat_history.add_assistant(step_result["summary"])
+
+#         for msg in self.chat_history.as_native():
+#             self.db.save_chat_history(self.project_name, msg["role"], msg["content"])
+
+#         self.db.save_last_step(self.project_name, self.step_count)
+
+#     def mark_done(self):
+#         self.progress["status"] = "completed"
+
+#     def done(self):
+#         return self.progress["status"] == "completed" or self.step_count > len(self.file_list)
+
+#     def step(self):
+#         log_info(self.project_name, f"🧠 Starting Step {self.step_count} at {timestamp_now()}")
+
+#         prompt = self.next_prompt()
+#         self.chat_history.add_user(prompt)
+#         log_info(self.project_name, f"📨 Prompt generated: {prompt[:100]}...")
+
+#         try:
+#             response = self.genner.generate_code(self.chat_history)
+#         except Exception as e:
+#             log_error(self.project_name, f"🔥 Exception during LLM call: {e}")
+#             return
+
+#         if not response or response.err():
+#             log_warn(self.project_name, "❌ No response from LLM or error occurred. Skipping step.")
+#             return
+
+#         code_blocks, raw_response = response.unwrap()
+#         print("\n🔍 RAW LLM RESPONSE:\n" + "-" * 100)
+#         print(raw_response)
+#         print("-" * 100)
+
+#         self.chat_history.add_assistant(raw_response)
+#         log_info(self.project_name, f"✅ LLM response received, {len(raw_response)} characters")
+#         log_info(self.project_name, f"📄 Generated {len(code_blocks)} code file(s)")
+
+#         if self.step_count == 0:
+#             try:
+#                 roadmap_json = extract_json_block(raw_response)
+#                 roadmap = json.loads(roadmap_json)
+#                 self.file_list = list(roadmap["files"].keys())
+#                 log_info(self.project_name, f"📁 Extracted file list: {self.file_list}")
+#             except Exception as e:
+#                 log_error(self.project_name, f"❌ Failed to parse roadmap JSON in step 0: {e}")
+#                 return
+
+#         # Save code using proper filenames and decoded format
+#         cleaned_code = clean_llm_code_blob(raw_response, self.file_list[self.step_count - 1])
+#         self.process_step({
+#     "files": {
+#         self.file_list[self.step_count - 1]: cleaned_code
+#     } if self.step_count > 0 and cleaned_code else {},
+#     "summary": raw_response,
+#     "status": "in_progress"
+# })
+
+#         self.step_count += 1
+#         log_info(self.project_name, f"🔢 Step {self.step_count} completed")
+
+#         if self.step_count > len(self.file_list):
+#             self.mark_done()
+#             log_info(self.project_name, "🎉 Project marked as complete.")
+
+#             final_prompt = self.prompt_generator.generate_final_prompt(self.project_name)
+#             self.chat_history.add_user(final_prompt)
+
+#             try:
+#                 readme_response = self.genner.generate_code(self.chat_history)
+#                 if not readme_response.err():
+#                     readme_raw = readme_response.unwrap()[1]
+#                     extracted = extract_content(readme_raw, "readme")
+#                     with open(f"logger/{self.project_name}/README.md", "w", encoding="utf-8") as f:
+#                         f.write(extracted)
+#                     log_info(self.project_name, "📘 README.md generated and saved.")
+#                 else:
+#                     log_warn(self.project_name, "⚠️ LLM failed to generate README.")
+#             except Exception as e:
+#                 log_error(self.project_name, f"❌ Failed to generate README.md: {e}")
+
 import os
-import json,re
+import json
+import re
 from datetime import datetime
 
 from agent.src.logger.project_logger import log_info, log_warn, log_error
 from agent.src.logger.project_writer import save_generated_files
 from agent.src.logger.copilot_tracker import track_step
 from agent.src.types import ChatHistory
-from agent.src.helper import timestamp_now, nanoid, extract_content, extract_json_block , clean_llm_code_blob
+from agent.src.helper import (
+    timestamp_now,
+    extract_content,
+    extract_json_block,
+    clean_llm_code_blob
+)
 
 
 class BuilderAgent:
@@ -184,7 +321,6 @@ class BuilderAgent:
         self.project_name = self.slugify(self.sensor.get())
         self.progress = {"status": "active", "step": 0}
         self.file_list = []
-        self.max_steps = 50
         self.step_count = 0
 
         os.makedirs(f"logger/{self.project_name}", exist_ok=True)
@@ -195,15 +331,15 @@ class BuilderAgent:
     def next_prompt(self):
         if self.step_count == 0:
             return self.prompt_generator.generate_prompt(self.sensor.get(), 0)
-
-        if hasattr(self, "file_list") and self.step_count <= len(self.file_list):
+        if self.step_count <= len(self.file_list):
             filename = self.file_list[self.step_count - 1]
-            return self.prompt_generator.generate_file_prompt(self.sensor.get(), self.step_count, filename)
-
+            return self.prompt_generator.generate_file_prompt(
+                self.sensor.get(), self.step_count, filename
+            )
         return self.prompt_generator.generate_prompt(self.sensor.get(), self.step_count)
 
     def process_step(self, step_result):
-        if "files" in step_result:
+        if "files" in step_result and step_result["files"]:
             save_generated_files(self.project_name, step_result["files"])
         track_step(self.project_name, self.step_count, step_result)
 
@@ -223,7 +359,6 @@ class BuilderAgent:
 
     def step(self):
         log_info(self.project_name, f"🧠 Starting Step {self.step_count} at {timestamp_now()}")
-
         prompt = self.next_prompt()
         self.chat_history.add_user(prompt)
         log_info(self.project_name, f"📨 Prompt generated: {prompt[:100]}...")
@@ -257,15 +392,22 @@ class BuilderAgent:
                 log_error(self.project_name, f"❌ Failed to parse roadmap JSON in step 0: {e}")
                 return
 
-        # Save code using proper filenames and decoded format
-        cleaned_code = clean_llm_code_blob(raw_response, self.file_list[self.step_count - 1])
-        self.process_step({
-    "files": {
-        self.file_list[self.step_count - 1]: cleaned_code
-    } if self.step_count > 0 and cleaned_code else {},
-    "summary": raw_response,
-    "status": "in_progress"
-})
+        if self.step_count > 0 and self.step_count <= len(self.file_list):
+            filename = self.file_list[self.step_count - 1]
+            try:
+                cleaned_code = clean_llm_code_blob(raw_response, filename)
+                self.process_step({
+                    "files": {filename: cleaned_code} if cleaned_code else {},
+                    "summary": raw_response,
+                    "status": "in_progress"
+                })
+            except Exception as e:
+                log_warn(self.project_name, f"⚠️ Failed to clean code blob for {filename}: {e}")
+        else:
+            self.process_step({
+                "summary": raw_response,
+                "status": "in_progress"
+            })
 
         self.step_count += 1
         log_info(self.project_name, f"🔢 Step {self.step_count} completed")
@@ -273,22 +415,32 @@ class BuilderAgent:
         if self.step_count > len(self.file_list):
             self.mark_done()
             log_info(self.project_name, "🎉 Project marked as complete.")
+            self.generate_readme()
 
-            final_prompt = self.prompt_generator.generate_final_prompt(self.project_name)
-            self.chat_history.add_user(final_prompt)
+    def generate_readme(self):
+        final_prompt = self.prompt_generator.generate_final_prompt(self.project_name)
+        self.chat_history.add_user(final_prompt)
+        try:
+            readme_response = self.genner.generate_code(self.chat_history)
+            if not readme_response.err():
+                readme_raw = readme_response.unwrap()[1]
+                extracted = extract_content(readme_raw, "readme")
 
-            try:
-                readme_response = self.genner.generate_code(self.chat_history)
-                if not readme_response.err():
-                    readme_raw = readme_response.unwrap()[1]
-                    extracted = extract_content(readme_raw, "readme")
-                    with open(f"logger/{self.project_name}/README.md", "w", encoding="utf-8") as f:
-                        f.write(extracted)
-                    log_info(self.project_name, "📘 README.md generated and saved.")
-                else:
-                    log_warn(self.project_name, "⚠️ LLM failed to generate README.")
-            except Exception as e:
-                log_error(self.project_name, f"❌ Failed to generate README.md: {e}")
+                try:
+                    cleaned_readme = bytes(extracted, "utf-8").decode("unicode_escape")
+                except Exception:
+                    cleaned_readme = extracted
+
+                cleaned_readme = re.sub(r"^```.*?\n|```$", "", cleaned_readme.strip(), flags=re.DOTALL)
+
+                with open(f"logger/{self.project_name}/README.md", "w", encoding="utf-8") as f:
+                    f.write(cleaned_readme)
+                log_info(self.project_name, "📘 README.md generated and saved.")
+            else:
+                log_warn(self.project_name, "⚠️ LLM failed to generate README.")
+        except Exception as e:
+            log_error(self.project_name, f"❌ Failed to generate README.md: {e}")
+
 
 # import os
 # import json
