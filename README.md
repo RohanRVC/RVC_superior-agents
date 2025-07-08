@@ -62,33 +62,43 @@ Then run the agent:
 
 ##AutoFounder project structure
 
-AutoFounder/
+superior-agent/
 ├── agent/
-│   ├── scripts/
-│   │   └── autofounder.py
-│   ├── flows/
-│   │   └── autofounder.py
-│   ├── agent/
-│   │   ├── builder.py
-│   │   └── prompt_generator.py
 │   ├── db/
 │   │   ├── __init__.py
 │   │   ├── chat.py
-│   │   ├── steps.py
-│   │   └── export.py
-│   ├── genner/
+│   │   ├── export.py
+│   │   ├── interface.py
+│   │   ├── sqlite.py
+│   │   └── steps.py
+│   ├── scripts/
 │   │   ├── __init__.py
-│   │   └── OpenRouterGenner.py
-│   ├── helper/
-│   │   └── helper.py
-│   ├── logger/
-│   │   ├── copilot_tracker.py
-│   │   ├── project_writer.py
-│   │   └── project_logger.py
-│   ├── sensor/
-│   │   └── idea.py
-│   └── types/
-│       └── __init__.py
+│   │   ├── autofounder.py
+│   │   └── main.py
+│   ├── src/
+│   │   ├── agent/
+│   │   │   ├── __init__.py
+│   │   │   ├── builder.py
+│   │   │   └── prompt_generator.py
+│   │   ├── client/
+│   │   │   ├── openrouter.py
+│   │   │   └── rag.py
+│   │   ├── flow/
+│   │   │   └── autofounder.py
+│   │   ├── genner/
+│   │   │   ├── __init__.py
+│   │   │   ├── Base.py
+│   │   │   └── OpenRouterGenner.py
+│   │   ├── logger/
+│   │   │   └── all.py
+│   │   ├── sensor/
+│   │   │   └── idea.py
+│   │   ├── __init__.py
+│   │   ├── config.py
+│   │   ├── helper.py
+│   │   └── types.py
+|
+└── main.py
 
 ## Project structure created by Agent
 
