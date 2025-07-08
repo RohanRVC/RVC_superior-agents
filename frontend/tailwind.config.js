@@ -7,13 +7,21 @@ export default {
   darkMode: 'class',
   theme: {
     fontFamily: {
-      'sans': ['ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'sans-serif'],
+      'sans': [
+        'ui-sans-serif', 
+        'system-ui', 
+        '-apple-system', 
+        'BlinkMacSystemFont', 
+        'Segoe UI', 
+        'Roboto', 
+        'Helvetica Neue', 
+        'Arial', 
+        'Noto Sans', 
+        'sans-serif'
+      ],
       'mono': ['Fira Code', 'Monaco', 'Cascadia Code', 'Ubuntu Mono', 'monospace'],
     },
     extend: {
-      borderColor: {
-        DEFAULT: 'currentColor',
-      },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
         'slide-up': 'slideUp 0.6s ease-out',
