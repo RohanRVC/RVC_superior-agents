@@ -1,0 +1,18 @@
+# Core frontend & backend
+streamlit==1.33.0
+python-dotenv==1.0.1
+
+# Backend dependencies (already used in AutoFounder)
+openai==1.30.1          # Optional, if using OpenAI
+anthropic==0.24.0       # Optional, if using Claude
+requests==2.31.0
+tqdm==4.66.4
+
+# Database + utilities
+sqlite-utils==3.36
+python-slugify==8.0.4   # For safe project folder naming
+markdown2==2.4.12       # If you render .md files anywhere
+
+# Optional (for linting or dev)
+black==24.4.2
+isort==5.13.2
