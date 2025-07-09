@@ -122,8 +122,8 @@ import streamlit.components.v1 as components
 # Load .env variables
 load_dotenv()
 
-st.set_page_config(page_title="AutoFounder UI", layout="centered")
-st.title("🤖 AutoFounder — Build Your Startup Automatically")
+st.set_page_config(page_title="RoboRunX UI", layout="centered")
+st.title("🤖 RoboRunX Terminal — Build Your Startup Automatically")
 
 # --- Build Form ---
 with st.form("build_form"):
