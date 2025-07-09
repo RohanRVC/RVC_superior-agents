@@ -193,7 +193,10 @@ def starter_prompt(user_idea=None):
     elif model == "claude" and not os.getenv("ANTHROPIC_API_KEY"):
         os.environ["ANTHROPIC_API_KEY"] = input("🔐 Enter your Claude API Key: ").strip()
     elif model == "openrouter" and not os.getenv("OPENROUTER_API_KEY"):
-        os.environ["OPENROUTER_API_KEY"] = input("🔐 Enter your OpenRouter API Key: ").strip()
+        if os.getenv("API_KEY"):
+            os.environ["OPENROUTER_API_KEY"] = os.getenv("API_KEY").strip()
+        else:
+            raise ValueError("❌ API_KEY not found in environment.")
 
     # Step 5: Init components
     sensor = IdeaSensor()
