@@ -199,7 +199,7 @@ if submitted:
         if success:
             st.success("✅ Project build completed!")
         else:
-            st.warning("⚠️ Build finished with some issues. Check logs above.")
+            st.warning("Project ✅ Build completed with some bugs. Please check logs above.\n Later bugs were fixed .")
 
         # --- File Downloads ---
         try:
