@@ -122,15 +122,15 @@ import streamlit.components.v1 as components
 # Load .env variables
 load_dotenv()
 
-st.set_page_config(page_title="RoboRunX UI", layout="centered")
-st.title("🤖 RoboRunX Terminal — Build Your Startup Automatically")
+st.set_page_config(page_title="AutoFounder UI", layout="centered")
+st.title("🤖 AutoFounder — Build Your Startup Automatically")
 
 # --- Build Form ---
 with st.form("build_form"):
     idea = st.text_input("💡 What's your startup idea?")
     model = st.selectbox("🤖 Choose your LLM model", ["OpenRouter (default)", "OpenAI", "Claude"])
     mode = st.radio("🕒 Run Mode", ["Demo (3 steps)", "Continuous (full build)"])
-    api_key = st.text_input("🔐 Enter your API key", type="password")
+    api_key = st.text_input("🔐 Enter your API key (Optional)", type="password")
     submitted = st.form_submit_button("🚀 Build Project")
 
 # Map model/mode to env values
@@ -148,8 +148,8 @@ run_mode_map = {
 if submitted:
     if not idea:
         st.error("❗ Please enter your startup idea.")
-    elif not api_key:
-        st.error("❗ API Key is required.")
+    # elif not api_key:
+    #     st.error("❗ API Key is required.")
     else:
         st.success("🧠 Starting AutoBuilder Agent...")
 
@@ -199,7 +199,7 @@ if submitted:
         if success:
             st.success("✅ Project build completed!")
         else:
-            st.warning("Project ✅ Build completed with some bugs. Please check logs above.\n Later bugs were fixed .")
+            st.warning("⚠️ Build finished with some issues. Check logs above.")
 
         # --- File Downloads ---
         try:
