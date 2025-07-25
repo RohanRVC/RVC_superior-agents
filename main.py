@@ -122,8 +122,8 @@ import streamlit.components.v1 as components
 # Load .env variables
 load_dotenv()
 
-st.set_page_config(page_title="AutoFounder UI", layout="centered")
-st.title("🤖 AutoFounder — Build Your Startup Automatically")
+st.set_page_config(page_title="RoboRunX UI", layout="centered")
+st.title("🤖 RoboRunX— Build Your Startup Automatically")
 
 # --- Build Form ---
 with st.form("build_form"):
@@ -158,7 +158,7 @@ if submitted:
         os.environ["RUN_MODE"] = run_mode_map[mode]
         os.environ["API_KEY"] = api_key
 
-        with st.spinner("⚙️ Running AutoFounder agent..."):
+        with st.spinner("⚙️ Running RoboRunX agent..."):
             env = os.environ.copy()
             env["PYTHONIOENCODING"] = "utf-8"
 
